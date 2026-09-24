@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StaminaMaster - Kegel Trainer</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --card-inner: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --primary-hover: #0284c7;
+            --success: #34d399;
+            --danger: #f87171;
+            --border: #475569;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            font-size: 24px;
+            margin: 10px 0 2px 0;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        /* Navigace */
+        .nav {
+            display: flex;
+            background: var(--card);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .nav button {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav button.active {
+            background: var(--card-inner);
+            color: var(--primary);
+        }
+
+        .section {
+            display: none;
+            background: var(--card);
+            padding: 18px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Karta úrovně */
+        .level-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .level-badge {
+            background: var(--primary);
+            color: #0f172a;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        /* Seznam cviků */
+        .exercise-card {
+            background: var(--card-inner);
+            border-left: 4px solid var(--primary);
+            padding: 14px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exercise-card.completed {
+            border-left-color: var(--success);
+            opacity: 0.6;
+            background: #192e2b;
+        }
+
+        .ex-info strong {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .ex-info span {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .btn-start-ex {
+            background: var(--primary);
+            color: #0f172a;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        /* Interaktivní player (odpočet) */
+        #player-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.98);
+            z-index: 100;
+            padding: 20px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .player-phase {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .phase-prep { color: #facc15; }
+        .phase-work { color: var(--success); }
+        .phase-rest { color: var(--primary); }
+
+        .breath-guide {
+            font-size: 15px;
+            font-weight: 600;
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            max-width: 90%;
+        }
+
+        .player-timer {
+            font-size: 85px;
+            font-weight: 900;
+            color: var(--text);
+            margin: 10px 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .player-reps {
+            font-size: 17px;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        .player-btn {
+            background: var(--card-inner);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-action {
+            width: 100%;
+            background: var(--success);
+            color: #064e3b;
+            border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 800;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 14px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: var(--card-inner);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        .log-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--card-inner);
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>StaminaMaster</h1>
+    <div class="subtitle">Interaktivní trénink pánevního dna</div>
+
+    <div class="nav">
+        <button id="tab-train" class="active" onclick="switchTab('train')">⏱️ Trénink</button>
+        <button id="tab-guide" onclick="switchTab('guide')">📖 Guideline</button>
+        <button id="tab-progress" onclick="switchTab('progress')">📈 Progres</button>
+        <button id="tab-settings" onclick="switchTab('settings')">⚙️ Nastavení</button>
+    </div>
+
+    <!-- 1. TRÉNINK -->
+    <div id="sec-train" class="section active">
+        <div class="level-card">
+            <div>
+                <div style="font-size: 11px; color: var(--text-muted);">AKTUÁLNÍ ÚROVEŇ</div>
+                <div style="font-weight: 700; font-size: 16px;" id="level-display">Level 1</div>
+            </div>
+            <div class="level-badge" id="next-level-badge">Do dalšího levelu: 15</div>
+        </div>
+
+        <div id="exercise-list">
+            <!-- Dynamicky generováno JS -->
+        </div>
+
+        <button class="btn-action" onclick="finishFullWorkout()">✅ Odškrtnout hotový trénink</button>
+    </div>
+
+    <!-- 2. GUIDELINE -->
+    <div id="sec-guide" class="section">
+        <h3 style="color: var(--primary); margin-top:0;">Edging & Kontrola vzrušení</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Trénink prováděj 2-3x týdně při sólo stimulaci.</p>
+        <ol style="padding-left: 20px; line-height: 1.6; font-size: 14px;">
+            <li><strong>Rozjezd (1-5/10):</strong> Pomalu a v klidu. Hlídej si uvolněné pánevní dno a hluboký dech do břicha.</li>
+            <li><strong>Nárůst (6-8/10):</strong> Svaly pánve se začnou samy zatahovat. Všímej si tohoto pocitu.</li>
+            <li><strong>Bod zlomu (8.5/10) - STOP:</strong> Pusť ruku, zastav veškerý kontakt!</li>
+            <li><strong>Reverse Kegel + Dech:</strong> Pomalý hluboký výdech, jemně vytlač sval ven. Ejakulační reflex do 10 vteřin opadne.</li>
+            <li><strong>Opakuj:</strong> Jakmile vzrušení opadne na 6/10, pokračuj. Cvič takto 3-4 cykly.</li>
+        </ol>
+    </div>
+
+    <!-- 3. PROGRES -->
+    <div id="sec-progress" class="section">
+        <h3 style="color: var(--primary); margin-top:0;">Historie & Statistika</h3>
+        <div style="font-size: 14px; margin-bottom: 15px;" id="stats-summary">Celkem tréninků: 0</div>
+        <div id="log-container"></div>
+        <button class="player-btn" style="width:100%; margin-top:20px;" onclick="clearLogs()">Vymazat historii</button>
+    </div>
+
+    <!-- 4. NASTAVENÍ -->
+    <div id="sec-settings" class="section">
+        <h3 style="color: var(--primary); margin-top:0;">Startovací bod</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Úroveň se automaticky zvyšuje každých 15 poctivě dokončených tréninků (cca 1x za týden).</p>
+        <div class="input-group">
+            <label>Výchozí čas pomalých stahů (vteřiny):</label>
+            <input type="number" id="setting-slow" value="3" min="1" max="10">
+        </div>
+        <div class="input-group">
+            <label>Výchozí čas Reverse Kegelu (vteřiny):</label>
+            <input type="number" id="setting-reverse" value="20" min="5" max="60">
+        </div>
+        <button class="btn-action" style="background:var(--primary); color:#0f172a;" onclick="saveSettings()">Uložit nastavení</button>
+    </div>
+</div>
+
+<!-- INTERAKTIVNÍ PLAYER -->
+<div id="player-overlay">
+    <div style="font-size:15px; color:var(--text-muted); margin-bottom: 4px;" id="player-title">Pomalé stahy</div>
+    <div class="player-phase phase-prep" id="player-phase">PŘIPRAV SE</div>
+    <div class="breath-guide" id="player-breath">Zaujmi pohodlnou polohu a zhluboka dýchej</div>
+    <div class="player-timer" id="player-timer">5</div>
+    <div class="player-reps" id="player-reps">Start za chvíli...</div>
+    <button class="player-btn" onclick="abortExercise()">Zrušit cvičení</button>
+</div>
+
+<script>
+    // --- ZVUKOVÝ EFEKT (Web Audio API) ---
+    function playBeep(freq = 600, duration = 0.15) {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = freq;
+            osc.start();
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+            osc.stop(ctx.currentTime + duration);
+        } catch(e) {}
+    }
+
+    // --- NASTAVENÍ & STAV ---
+    let settings = JSON.parse(localStorage.getItem('staminaSettings')) || { baseSlow: 3, baseReverse: 20 };
+    let sessionCompleted = JSON.parse(localStorage.getItem('staminaCurrentSession')) || { fast: false, slow: false, reverse: false };
+
+    function saveSettings() {
+        settings.baseSlow = parseInt(document.getElementById('setting-slow').value) || 3;
+        settings.baseReverse = parseInt(document.getElementById('setting-reverse').value) || 20;
+        localStorage.setItem('staminaSettings', JSON.stringify(settings));
+        renderExerciseList();
+        alert('Nastavení uloženo!');
+        switchTab('train');
+    }
+
+    // --- LEVELOVACÍ LOGIKA (Každých 15 tréninků = +1 Level) ---
+    const WORKOUTS_PER_LEVEL = 15;
+
+    function getProgression() {
+        const logs = JSON.parse(localStorage.getItem('staminaLogs')) || [];
+        const total = logs.length;
+        const level = Math.floor(total / WORKOUTS_PER_LEVEL) + 1;
+        const remainder = WORKOUTS_PER_LEVEL - (total % WORKOUTS_PER_LEVEL);
+
+        const slowTime = Math.min(settings.baseSlow + (level - 1), 12);
+        const reverseTime = Math.min(settings.baseReverse + ((level - 1) * 5), 60);
+
+        return { level, remainder, slowTime, reverseTime, total };
+    }
+
+    // --- VYKRESLENÍ CVIKŮ ---
+    function renderExerciseList() {
+        const prog = getProgression();
+        document.getElementById('level-display').innerText = `Level ${prog.level}`;
+        document.getElementById('next-level-badge').innerText = prog.remainder === WORKOUTS_PER_LEVEL && prog.total > 0 ? 'Nová úroveň!' : `Do Levelu ${prog.level + 1}: ${prog.remainder}`;
+
+        const list = document.getElementById('exercise-list');
+        list.innerHTML = '';
+
+        const exercises = [
+            {
+                id: 'fast',
+                name: '1. Rychlé stahy',
+                desc: '1s stah + 2s uvolnění (10 opakování)',
+                work: 1, rest: 2, reps: 10
+            },
+            {
+                id: 'slow',
+                name: '2. Pomalé stahy',
+                desc: `${prog.slowTime}s stah + ${prog.slowTime}s uvolnění (10 opakování)`,
+                work: prog.slowTime, rest: prog.slowTime, reps: 10
+            },
+            {
+                id: 'reverse',
+                name: '3. Reverse Kegel',
+                desc: `${prog.reverseTime}s vytlačení ven + 10s odpočinek (3 opakování)`,
+                work: prog.reverseTime, rest: 10, reps: 3
+            }
+        ];
+
+        exercises.forEach(ex => {
+            const isDone = sessionCompleted[ex.id];
+            
+            const card = document.createElement('div');
+            card.className = `exercise-card ${isDone ? 'completed' : ''}`;
+            card.innerHTML = `
+                <div class="ex-info">
+                    <strong>${ex.name} ${isDone ? '✅' : ''}</strong>
+                    <span>${isDone ? 'Splněno pro tento trénink' : ex.desc}</span>
+                </div>
+                ${!isDone ? `<button class="btn-start-ex" onclick="startExercise('${ex.id}', '${ex.name}', ${ex.work}, ${ex.rest}, ${ex.reps})">Spustit</button>` : ''}
+            `;
+            list.appendChild(card);
+        });
+
+        document.getElementById('setting-slow').value = settings.baseSlow;
+        document.getElementById('setting-reverse').value = settings.baseReverse;
+    }
+
+    // --- INTERAKTIVNÍ PLAYER S 5s PŘÍPRAVOU A DECHEM ---
+    let playerTimer = null;
+    let currentExId = null;
+
+    function startExercise(id, name, workTime, restTime, totalReps) {
+        currentExId = id;
+        document.getElementById('player-title').innerText = name;
+        document.getElementById('player-overlay').style.display = 'flex';
+
+        // 1. FÁZE: 5 vteřin příprava
+        let prepTime = 5;
+        const phaseEl = document.getElementById('player-phase');
+        const breathEl = document.getElementById('player-breath');
+        const timerEl = document.getElementById('player-timer');
+        const repsEl = document.getElementById('player-reps');
+
+        phaseEl.innerText = 'PŘIPRAV SE';
+        phaseEl.className = 'player-phase phase-prep';
+        breathEl.innerText = 'Zvolni břicho a zhluboka dýchej';
+        timerEl.innerText = prepTime;
+        repsEl.innerText = 'Startujeme za chvíli...';
+        playBeep(450, 0.1);
+
+        playerTimer = setInterval(() => {
+            prepTime--;
+            if (prepTime > 0) {
+                timerEl.innerText = prepTime;
+                playBeep(450, 0.1);
+            } else {
+                clearInterval(playerTimer);
+                // 2. FÁZE: Start samotného cvičení
+                runWorkoutLoop(id, workTime, restTime, totalReps);
+            }
+        }, 1000);
+    }
+
+    function runWorkoutLoop(id, workTime, restTime, totalReps) {
+        let currentRep = 1;
+        let isWork = true;
+        let timeLeft = workTime;
+
+        const phaseEl = document.getElementById('player-phase');
+        const breathEl = document.getElementById('player-breath');
+        const timerEl = document.getElementById('player-timer');
+        const repsEl = document.getElementById('player-reps');
+
+        function updateUI() {
+            if (isWork) {
+                if (id === 'reverse') {
+                    phaseEl.innerText = 'UVOLNI / VYTLAČ';
+                    breathEl.innerText = '🫁 Dýchej klidně do břicha a jemně povoluj pánev dolů';
+                } else {
+                    phaseEl.innerText = 'ZATNOUT';
+                    breathEl.innerText = '💨 Pomalý výdech ústy a pevné zatnutí svalu';
+                }
+                phaseEl.className = 'player-phase phase-work';
+            } else {
+                phaseEl.innerText = 'UVOLNIT / ODPOČINEK';
+                breathEl.innerText = '🫁 Hluboký nádech nosem do břicha, úplné povolení';
+                phaseEl.className = 'player-phase phase-rest';
+            }
+            timerEl.innerText = timeLeft;
+            repsEl.innerText = `Opakování ${currentRep} z ${totalReps}`;
+        }
+
+        playBeep(850, 0.25);
+        updateUI();
+
+        playerTimer = setInterval(() => {
+            timeLeft--;
+            if (timeLeft <= 0) {
+                if (isWork) {
+                    // Konec zatnutí -> začíná uvolnění
+                    isWork = false;
+                    timeLeft = restTime;
+                    playBeep(400, 0.15);
+                } else {
+                    // Konec uvolnění -> další opakování
+                    currentRep++;
+                    if (currentRep > totalReps) {
+                        // Konec cviku
+                        clearInterval(playerTimer);
+                        finishExerciseSuccess(id);
+                        return;
+                    }
+                    isWork = true;
+                    timeLeft = workTime;
+                    playBeep(850, 0.25);
+                }
+            }
+            updateUI();
+        }, 1000);
+    }
+
+    function abortExercise() {
+        clearInterval(playerTimer);
+        document.getElementById('player-overlay').style.display = 'none';
+    }
+
+    function finishExerciseSuccess(id) {
+        document.getElementById('player-overlay').style.display = 'none';
+        sessionCompleted[id] = true;
+        localStorage.setItem('staminaCurrentSession', JSON.stringify(sessionCompleted));
+        playBeep(1000, 0.4);
+        renderExerciseList();
+    }
+
+    // --- UKONČENÍ CELÉHO TRÉNINKU ---
+    function finishFullWorkout() {
+        const anyDone = sessionCompleted.fast || sessionCompleted.slow || sessionCompleted.reverse;
+        if (!anyDone) {
+            alert('Nejprve odcvič alespoň jeden cvik!');
+            return;
+        }
+
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('cs-CZ') + ' ' + now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
+        
+        let logs = JSON.parse(localStorage.getItem('staminaLogs')) || [];
+        logs.push(dateStr);
+        localStorage.setItem('staminaLogs', JSON.stringify(logs));
+
+        // Reset stavu pro další trénink
+        sessionCompleted = { fast: false, slow: false, reverse: false };
+        localStorage.setItem('staminaCurrentSession', JSON.stringify(sessionCompleted));
+
+        renderExerciseList();
+        alert('Skvělá práce! Trénink zapsán do historie a všechny cviky jsou znovu připraveny na příště.');
+    }
+
+    // --- PŘEPÍNÁNÍ ZÁLOŽEK ---
+    function switchTab(tabId) {
+        document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav button').forEach(el => el.classList.remove('active'));
+        document.getElementById('sec-' + tabId).classList.add('active');
+        document.getElementById('tab-' + tabId).classList.add('active');
+        if(tabId === 'progress') renderLogs();
+        if(tabId === 'train') renderExerciseList();
+    }
+
+    function renderLogs() {
+        const logs = JSON.parse(localStorage.getItem('staminaLogs')) || [];
+        const container = document.getElementById('log-container');
+        document.getElementById('stats-summary').innerText = `Celkem odcvičeno: ${logs.length} tréninků`;
+        container.innerHTML = logs.length === 0 ? '<p style="color:var(--text-muted); font-size:13px;">Zatím žádná historie.</p>' : '';
+        
+        logs.slice().reverse().forEach((log, index) => {
+            container.innerHTML += `
+                <div class="log-entry">
+                    <span style="font-weight:600; color:var(--primary);">Trénink #${logs.length - index}</span>
+                    <span style="color:var(--text-muted);">${log}</span>
+                </div>`;
+        });
+    }
+
+    function clearLogs() {
+        if(confirm("Opravdu smazat historii tréninků?")) {
+            localStorage.removeItem('staminaLogs');
+            sessionCompleted = { fast: false, slow: false, reverse: false };
+            localStorage.setItem('staminaCurrentSession', JSON.stringify(sessionCompleted));
+            renderExerciseList();
+            renderLogs();
+        }
+    }
+
+    // Start
+    renderExerciseList();
+</script>
+
+</body>
+</html>
