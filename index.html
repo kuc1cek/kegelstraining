@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StaminaMaster - Kegel Trainer</title>
-
-    <!-- Ikonka pro plochu mobilu (iPhone i Android) -->
+    <!-- Ikonka pro iPhone i Android -->
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/192/strength.png">
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/192/strength.png">
-
     <style>
         :root {
             --bg: #0f172a;
@@ -185,11 +183,10 @@
             font-weight: 600;
             color: #e2e8f0;
             background: rgba(255, 255, 255, 0.08);
-            padding: 10px 18px;
+            padding: 8px 16px;
             border-radius: 20px;
             margin-bottom: 15px;
             max-width: 90%;
-            line-height: 1.4;
         }
 
         .player-timer {
@@ -281,7 +278,7 @@
                 <div style="font-size: 11px; color: var(--text-muted);">AKTUÁLNÍ ÚROVEŇ</div>
                 <div style="font-weight: 700; font-size: 16px;" id="level-display">Level 1</div>
             </div>
-            <div class="level-badge" id="next-level-badge">Do dalšího levelu: 15</div>
+            <div class="level-badge" id="next-level-badge">Do dalšího levelu: 6</div>
         </div>
 
         <div id="exercise-list">
@@ -296,10 +293,10 @@
         <h3 style="color: var(--primary); margin-top:0;">Edging & Kontrola vzrušení</h3>
         <p style="font-size:13px; color:var(--text-muted);">Trénink prováděj 2-3x týdně při sólo stimulaci.</p>
         <ol style="padding-left: 20px; line-height: 1.6; font-size: 14px;">
-            <li><strong>Rozjezd (1-5/10):</strong> Pomalu a v klidu. Hlídej si uvolněné pánevní dno a klidný dech.</li>
-            <li><strong>Nárůst (6-8/10):</strong> Svaly pánve se začnou samy zatahovat. Pozoruj toto napětí.</li>
+            <li><strong>Rozjezd (1-5/10):</strong> Pomalu a v klidu. Hlídej si uvolněné pánevní dno a hluboký dech do břicha.</li>
+            <li><strong>Nárůst (6-8/10):</strong> Svaly pánve se začnou samy zatahovat. Všímej si tohoto pocitu.</li>
             <li><strong>Bod zlomu (8.5/10) - STOP:</strong> Pusť ruku, zastav veškerý kontakt!</li>
-            <li><strong>Záchranný výdech (Reverse):</strong> Udělej dlouhý, pomalý výdech, jemně vytlač sval ven a nech pánev úplně roztéct. Ejakulační reflex do 10 vteřin opadne.</li>
+            <li><strong>Reverse Kegel + Dech:</strong> Pomalý hluboký výdech, jemně vytlač sval ven. Ejakulační reflex do 10 vteřin opadne.</li>
             <li><strong>Opakuj:</strong> Jakmile vzrušení opadne na 6/10, pokračuj. Cvič takto 3-4 cykly.</li>
         </ol>
     </div>
@@ -315,7 +312,7 @@
     <!-- 4. NASTAVENÍ -->
     <div id="sec-settings" class="section">
         <h3 style="color: var(--primary); margin-top:0;">Startovací bod</h3>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Úroveň se automaticky zvyšuje každých 15 poctivě dokončených tréninků (cca 1x za týden).</p>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Úroveň se automaticky zvyšuje každých 6 poctivě dokončených tréninků.</p>
         <div class="input-group">
             <label>Výchozí čas pomalých stahů (vteřiny):</label>
             <input type="number" id="setting-slow" value="3" min="1" max="10">
@@ -332,9 +329,9 @@
 <div id="player-overlay">
     <div style="font-size:15px; color:var(--text-muted); margin-bottom: 4px;" id="player-title">Pomalé stahy</div>
     <div class="player-phase phase-prep" id="player-phase">PŘIPRAV SE</div>
-    <div class="breath-guide" id="player-breath">Zvolni tělo a připrav se na cvičení</div>
+    <div class="breath-guide" id="player-breath">Zaujmi pohodlnou polohu a zhluboka dýchej</div>
     <div class="player-timer" id="player-timer">5</div>
-    <div class="player-reps" id="player-reps">Startujeme za chvíli...</div>
+    <div class="player-reps" id="player-reps">Start za chvíli...</div>
     <button class="player-btn" onclick="abortExercise()">Zrušit cvičení</button>
 </div>
 
@@ -367,8 +364,8 @@
         switchTab('train');
     }
 
-    // --- LEVELOVACÍ LOGIKA (15 tréninků = +1 Level) ---
-    const WORKOUTS_PER_LEVEL = 15;
+    // --- LEVELOVACÍ LOGIKA (Každých 6 tréninků = +1 Level) ---
+    const WORKOUTS_PER_LEVEL = 6;
 
     function getProgression() {
         const logs = JSON.parse(localStorage.getItem('staminaLogs')) || [];
@@ -386,7 +383,7 @@
     function renderExerciseList() {
         const prog = getProgression();
         document.getElementById('level-display').innerText = `Level ${prog.level}`;
-        document.getElementById('next-level-badge').innerText = prog.remainder === WORKOUTS_PER_LEVEL && prog.total > 0 ? 'Nová úroveň!' : `Do Levelu ${prog.level + 1}: ${prog.remainder}`;
+        document.getElementById('next-level-badge').innerText = (prog.remainder === WORKOUTS_PER_LEVEL && prog.total > 0) ? 'Nová úroveň!' : `Do Levelu ${prog.level + 1}: ${prog.remainder}`;
 
         const list = document.getElementById('exercise-list');
         list.innerHTML = '';
@@ -431,7 +428,7 @@
         document.getElementById('setting-reverse').value = settings.baseReverse;
     }
 
-    // --- INTERAKTIVNÍ PLAYER ---
+    // --- INTERAKTIVNÍ PLAYER S 5s PŘÍPRAVOU A DECHEM ---
     let playerTimer = null;
     let currentExId = null;
 
@@ -440,7 +437,7 @@
         document.getElementById('player-title').innerText = name;
         document.getElementById('player-overlay').style.display = 'flex';
 
-        // 1. PŘÍPRAVA (5s)
+        // 1. FÁZE: 5 vteřin příprava
         let prepTime = 5;
         const phaseEl = document.getElementById('player-phase');
         const breathEl = document.getElementById('player-breath');
@@ -449,7 +446,7 @@
 
         phaseEl.innerText = 'PŘIPRAV SE';
         phaseEl.className = 'player-phase phase-prep';
-        breathEl.innerText = 'Zvolni tělo a připrav se na cvičení';
+        breathEl.innerText = 'Zvolni břicho a zhluboka dýchej';
         timerEl.innerText = prepTime;
         repsEl.innerText = 'Startujeme za chvíli...';
         playBeep(450, 0.1);
@@ -461,7 +458,7 @@
                 playBeep(450, 0.1);
             } else {
                 clearInterval(playerTimer);
-                // 2. SPUŠTĚNÍ OPAKOVÁNÍ
+                // 2. FÁZE: Start samotného cvičení
                 runWorkoutLoop(id, workTime, restTime, totalReps);
             }
         }, 1000);
@@ -481,15 +478,15 @@
             if (isWork) {
                 if (id === 'reverse') {
                     phaseEl.innerText = 'UVOLNI / VYTLAČ';
-                    breathEl.innerText = '🫁 Jemně vytlačuj ven & volně dýchej do břicha';
+                    breathEl.innerText = '🫁 Dýchej klidně do břicha a jemně povoluj pánev dolů';
                 } else {
                     phaseEl.innerText = 'ZATNOUT';
-                    breathEl.innerText = '🫁 Pevně zatni & dýchej plynule (nezadržuj dech!)';
+                    breathEl.innerText = '💨 Pomalý výdech ústy a pevné zatnutí svalu';
                 }
                 phaseEl.className = 'player-phase phase-work';
             } else {
                 phaseEl.innerText = 'UVOLNIT / ODPOČINEK';
-                breathEl.innerText = '💨 Pomalý hluboký výdech, nechej pánev úplně rozpustit';
+                breathEl.innerText = '🫁 Hluboký nádech nosem do břicha, úplné povolení';
                 phaseEl.className = 'player-phase phase-rest';
             }
             timerEl.innerText = timeLeft;
@@ -503,7 +500,7 @@
             timeLeft--;
             if (timeLeft <= 0) {
                 if (isWork) {
-                    // Konec stahu -> začíná uvolnění
+                    // Konec zatnutí -> začíná uvolnění
                     isWork = false;
                     timeLeft = restTime;
                     playBeep(400, 0.15);
@@ -553,7 +550,7 @@
         logs.push(dateStr);
         localStorage.setItem('staminaLogs', JSON.stringify(logs));
 
-        // Reset cviků pro příští trénink
+        // Reset stavu pro další trénink
         sessionCompleted = { fast: false, slow: false, reverse: false };
         localStorage.setItem('staminaCurrentSession', JSON.stringify(sessionCompleted));
 
@@ -579,26 +576,3 @@
         
         logs.slice().reverse().forEach((log, index) => {
             container.innerHTML += `
-                <div class="log-entry">
-                    <span style="font-weight:600; color:var(--primary);">Trénink #${logs.length - index}</span>
-                    <span style="color:var(--text-muted);">${log}</span>
-                </div>`;
-        });
-    }
-
-    function clearLogs() {
-        if(confirm("Opravdu smazat historii tréninků?")) {
-            localStorage.removeItem('staminaLogs');
-            sessionCompleted = { fast: false, slow: false, reverse: false };
-            localStorage.setItem('staminaCurrentSession', JSON.stringify(sessionCompleted));
-            renderExerciseList();
-            renderLogs();
-        }
-    }
-
-    // Start
-    renderExerciseList();
-</script>
-
-</body>
-</html>
