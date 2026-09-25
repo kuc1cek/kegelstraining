@@ -576,3 +576,26 @@
         
         logs.slice().reverse().forEach((log, index) => {
             container.innerHTML += `
+                <div class="log-entry">
+                    <span style="font-weight:600; color:var(--primary);">Trénink #${logs.length - index}</span>
+                    <span style="color:var(--text-muted);">${log}</span>
+                </div>`;
+        });
+    }
+
+    function clearLogs() {
+        if(confirm("Opravdu smazat historii tréninků?")) {
+            localStorage.removeItem('staminaLogs');
+            sessionCompleted = { fast: false, slow: false, reverse: false };
+            localStorage.setItem('staminaCurrentSession', JSON.stringify(sessionCompleted));
+            renderExerciseList();
+            renderLogs();
+        }
+    }
+
+    // Start
+    renderExerciseList();
+</script>
+
+</body>
+</html>
