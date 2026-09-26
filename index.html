@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StaminaMaster - Kegel Trainer</title>
-    <!-- Ikonka pro iPhone i Android -->
+    <title>Kegels Training</title>
+
+    <!-- Ikonka pro plochu mobilu (iPhone i Android) -->
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/192/strength.png">
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/192/strength.png">
+
     <style>
         :root {
             --bg: #0f172a;
@@ -90,7 +92,6 @@
             display: block;
         }
 
-        /* Karta úrovně */
         .level-card {
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border: 1px solid var(--primary);
@@ -111,7 +112,6 @@
             font-size: 12px;
         }
 
-        /* Seznam cviků */
         .exercise-card {
             background: var(--card-inner);
             border-left: 4px solid var(--primary);
@@ -152,7 +152,7 @@
             white-space: nowrap;
         }
 
-        /* Interaktivní player (odpočet) */
+        /* Interaktivní přehrávač */
         #player-overlay {
             display: none;
             position: fixed;
@@ -256,12 +256,42 @@
             border-bottom: 1px solid var(--card-inner);
             font-size: 13px;
         }
+
+        /* Styl pro Guideline */
+        .guide-box {
+            background: var(--card-inner);
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .guide-box h4 {
+            margin: 0 0 6px 0;
+            color: var(--primary);
+            font-size: 15px;
+        }
+
+        .guide-box p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text);
+        }
+
+        .ritual-box {
+            background: #1e3a5f;
+            border: 1px solid var(--primary);
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 14px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>StaminaMaster</h1>
+    <h1>Kegels Training</h1>
     <div class="subtitle">Interaktivní trénink pánevního dna</div>
 
     <div class="nav">
@@ -278,11 +308,11 @@
                 <div style="font-size: 11px; color: var(--text-muted);">AKTUÁLNÍ ÚROVEŇ</div>
                 <div style="font-weight: 700; font-size: 16px;" id="level-display">Level 1</div>
             </div>
-            <div class="level-badge" id="next-level-badge">Do dalšího levelu: 6</div>
+            <div class="level-badge" id="next-level-badge">Do dalšího levelu: 9</div>
         </div>
 
         <div id="exercise-list">
-            <!-- Dynamicky generováno JS -->
+            <!-- Generuje se dynamicky přes JavaScript -->
         </div>
 
         <button class="btn-action" onclick="finishFullWorkout()">✅ Odškrtnout hotový trénink</button>
@@ -290,14 +320,53 @@
 
     <!-- 2. GUIDELINE -->
     <div id="sec-guide" class="section">
-        <h3 style="color: var(--primary); margin-top:0;">Edging & Kontrola vzrušení</h3>
-        <p style="font-size:13px; color:var(--text-muted);">Trénink prováděj 2-3x týdně při sólo stimulaci.</p>
-        <ol style="padding-left: 20px; line-height: 1.6; font-size: 14px;">
-            <li><strong>Rozjezd (1-5/10):</strong> Pomalu a v klidu. Hlídej si uvolněné pánevní dno a hluboký dech do břicha.</li>
-            <li><strong>Nárůst (6-8/10):</strong> Svaly pánve se začnou samy zatahovat. Všímej si tohoto pocitu.</li>
-            <li><strong>Bod zlomu (8.5/10) - STOP:</strong> Pusť ruku, zastav veškerý kontakt!</li>
-            <li><strong>Reverse Kegel + Dech:</strong> Pomalý hluboký výdech, jemně vytlač sval ven. Ejakulační reflex do 10 vteřin opadne.</li>
-            <li><strong>Opakuj:</strong> Jakmile vzrušení opadne na 6/10, pokračuj. Cvič takto 3-4 cykly.</li>
+        <h3 style="color: var(--primary); margin-top:0;">Jak uvolnit pánevní dno PŘI SEXU</h3>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
+            Nesnaž se „na to nemyslet“. Ejakulační reflex je autonomní – nejlepší volbou je vědomý fyzický zásah v kombinaci se zklidněním nervového systému.
+        </p>
+
+        <div class="guide-box">
+            <h4>1. Aktivní Reverse Kegel (Fyzická brzda)</h4>
+            <p>Když cítíš, že se vzrušení blíží k 7–8 z 10, pošli vědomý tlak do hráze a <strong>jemně ji vytlač směrem dolů a ven</strong> (pocit jako při zrychlení moči). Tím svaly roztáhneš a zabráníš jim v křečovitém stažení, které spouští ejakulaci.</p>
+        </div>
+
+        <div class="guide-box">
+            <h4>2. Nádech do podbřišku + Pomalý výdech</h4>
+            <p><strong>Nádech nosem:</strong> Veď dech hluboko až do pánve (bránice sjede dolů a mechanicky prověsí pánevní dno).<br>
+            <strong>Pomalý výdech ústy:</strong> Dlouhý výdech aktivuje parasympatikus, zpomalí tep a vypne v mozku paniku a nutkání vyvrcholit.</p>
+        </div>
+
+        <div class="guide-box">
+            <h4>3. Uvolnění hýždí a čelisti (Svalové řetězce)</h4>
+            <p><strong>Povol hýždě (zadek):</strong> Sevření půlek automaticky sevře i pánev do křeče. Zadek musí zůstat měkký.<br>
+            <strong>Povol čelist:</strong> Pootevři ústa a spusť ramena. Neurologické spojení mezi krkem a pánví způsobí, že pánevní dno okamžitě povolí.</p>
+        </div>
+
+        <div class="guide-box">
+            <h4>4. Změna hloubky přírazů</h4>
+            <p>Nemusíš úplně přestat: přejdi z hlubokých rychlých přírazů na mělké krouživé pohyby, nebo využij techniku <strong>Deep soaking</strong> (zasunout hluboko, na 5–10 vteřin se úplně zastavit, obejmout partnerku a zhluboka dýchat).</p>
+        </div>
+
+        <div class="ritual-box">
+            <strong style="color:var(--primary); font-size:14px; display:block; margin-bottom:6px;">⚡ 10sekundový záchranný rituál v akci:</strong>
+            <ol style="margin:0; padding-left:18px; font-size:13px; line-height:1.5;">
+                <li>Povol zadek a uvolni čelist.</li>
+                <li>Udělej hluboký nádech nosem do břicha a jemně vytlač sval ven (Reverse Kegel).</li>
+                <li>Pomalu vydechni ústy bez jakéhokoliv zatnutí.</li>
+                <li>Během 2 klidných dechů spadne vzrušení z 8/10 na bezpečných 5/10.</li>
+            </ol>
+        </div>
+
+        <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+
+        <h3 style="color: var(--primary); margin-top:0;">Sólo trénink: Edging</h3>
+        <p style="font-size:13px; color:var(--text-muted);">Trénuj 2–3× týdně při sólo stimulaci bez cíle vyvrcholit:</p>
+        <ol style="padding-left: 20px; line-height: 1.6; font-size: 13px;">
+            <li><strong>Rozjezd (1–5/10):</strong> Pomalá stimulace, uvolněná pánev, dech do břicha.</li>
+            <li><strong>Nárůst (6–8/10):</strong> Svaly pánve se začnou samy zatahovat – všímej si toho.</li>
+            <li><strong>Bod zlomu (8.5/10) - STOP:</strong> Pusť ruku, zastav veškerý kontakt.</li>
+            <li><strong>Reverse Kegel + Dech:</strong> Pomalý výdech, vytlač sval ven – reflex do 10 vteřin opadne.</li>
+            <li><strong>Opakuj:</strong> Jakmile vzrušení klesne na 6/10, pokračuj (3–4 cykly).</li>
         </ol>
     </div>
 
@@ -312,7 +381,7 @@
     <!-- 4. NASTAVENÍ -->
     <div id="sec-settings" class="section">
         <h3 style="color: var(--primary); margin-top:0;">Startovací bod</h3>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Úroveň se automaticky zvyšuje každých 6 poctivě dokončených tréninků.</p>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Úroveň se automaticky zvyšuje každých 9 poctivě dokončených tréninků.</p>
         <div class="input-group">
             <label>Výchozí čas pomalých stahů (vteřiny):</label>
             <input type="number" id="setting-slow" value="3" min="1" max="10">
@@ -329,7 +398,7 @@
 <div id="player-overlay">
     <div style="font-size:15px; color:var(--text-muted); margin-bottom: 4px;" id="player-title">Pomalé stahy</div>
     <div class="player-phase phase-prep" id="player-phase">PŘIPRAV SE</div>
-    <div class="breath-guide" id="player-breath">Zaujmi pohodlnou polohu a zhluboka dýchej</div>
+    <div class="breath-guide" id="player-breath">Zvolni břicho a zhluboka dýchej</div>
     <div class="player-timer" id="player-timer">5</div>
     <div class="player-reps" id="player-reps">Start za chvíli...</div>
     <button class="player-btn" onclick="abortExercise()">Zrušit cvičení</button>
@@ -364,8 +433,8 @@
         switchTab('train');
     }
 
-    // --- LEVELOVACÍ LOGIKA (Každých 6 tréninků = +1 Level) ---
-    const WORKOUTS_PER_LEVEL = 6;
+    // --- LEVELOVACÍ LOGIKA (Každých 9 tréninků = +1 Level) ---
+    const WORKOUTS_PER_LEVEL = 9;
 
     function getProgression() {
         const logs = JSON.parse(localStorage.getItem('staminaLogs')) || [];
