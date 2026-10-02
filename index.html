@@ -2,12 +2,22 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Kegels Training</title>
 
-    <!-- Ikonka pro plochu mobilu (iPhone i Android) -->
+    <!-- REŽIM ČISTÉ APLIKACE (PWA Standalone - skryje lišty prohlížeče) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kegels">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0f172a">
+
+    <!-- Ikonka pro iPhone i Android -->
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/192/strength.png">
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/192/strength.png">
+
+    <!-- Vestavěný Manifest pro instalaci aplikace -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Kegels Training","short_name":"Kegels","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"https://img.icons8.com/fluency/192/strength.png","sizes":"192x192","type":"image/png"}]}'>
 
     <style>
         :root {
@@ -29,8 +39,12 @@
             color: var(--text);
             margin: 0;
             padding: 16px;
+            padding-top: max(16px, env(safe-area-inset-top));
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
             display: flex;
             justify-content: center;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .container {
@@ -52,7 +66,7 @@
             margin-bottom: 16px;
         }
 
-        /* Navigace */
+        /* Hlavní Navigace */
         .nav {
             display: flex;
             background: var(--card);
@@ -78,6 +92,35 @@
         .nav button.active {
             background: var(--card-inner);
             color: var(--primary);
+        }
+
+        /* Podnavigace v Guideline */
+        .sub-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            background: #0b1120;
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .sub-nav button {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sub-nav button.active {
+            background: var(--primary);
+            color: #0f172a;
         }
 
         .section {
@@ -263,7 +306,7 @@
             background: var(--card-inner);
             padding: 14px;
             border-radius: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             border-left: 3px solid var(--primary);
         }
 
@@ -286,6 +329,16 @@
             padding: 14px;
             border-radius: 8px;
             margin-top: 14px;
+        }
+
+        .warning-box {
+            background: #451a1a;
+            border-left: 3px solid var(--danger);
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            line-height: 1.5;
+            margin: 12px 0;
         }
     </style>
 </head>
@@ -313,7 +366,7 @@
         </div>
 
         <div id="exercise-list">
-            <!-- Generuje se dynamicky přes JavaScript -->
+            <!-- Dynamický seznam cviků -->
         </div>
 
         <button class="btn-action" onclick="finishFullWorkout()">✅ Odškrtnout hotový trénink</button>
@@ -321,53 +374,113 @@
 
     <!-- 2. GUIDELINE -->
     <div id="sec-guide" class="section">
-        <h3 style="color: var(--primary); margin-top:0;">Jak uvolnit pánevní dno PŘI SEXU</h3>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
-            Ejakulační reflex je autonomní. Nejlepší volbou je vědomý fyzický zásah v dokonalé shodě s přirozeným bráničním dechem.
-        </p>
-
-        <div class="guide-box">
-            <h4>1. Reverse Kegel + Nádech do pánve (Dokonalá synergie)</h4>
-            <p>Když cítíš, že se vzrušení blíží k 7–8 z 10, **udělej pomalý nádech nosem hluboko dolů do podbřišku a současně jemně vytlač hráz směrem ven**. Klesající bránice udělá polovinu práce za tebe a svaly fyzicky prověsí. Svaly se nemohou zároveň stahovat do křeče a roztahovat ven.</p>
+        <!-- Podzáložky -->
+        <div class="sub-nav">
+            <button id="subtab-sex" class="active" onclick="switchGuideSubTab('sex')">⚡ Při sexu & Edging</button>
+            <button id="subtab-rk" onclick="switchGuideSubTab('rk')">🧘 Reverse Kegel Manuál</button>
         </div>
 
-        <div class="guide-box">
-            <h4>2. Pomalý výdech ústy (Zklidnění tepu)</h4>
-            <p>Po hlubokém nádechu vydechni pomalu a plynule ústy (jako bys foukal do polévky). Dlouhý výdech aktivuje parasympatikus a vypne poplach v mozku. <strong>Pozor:</strong> Při výdechu svaly nezatínej zpět, nech je stále prověšené!</p>
-        </div>
+        <!-- 2A. PODSEKCE: PŘI SEXU & EDGING -->
+        <div id="guidesec-sex">
+            <h3 style="color: var(--primary); margin-top:0;">Jak uvolnit pánevní dno PŘI SEXU</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
+                Ejakulační reflex je autonomní. Nejlepší volbou je vědomý fyzický zásah v dokonalé shodě s přirozeným bráničním dechem.
+            </p>
 
-        <div class="guide-box">
-            <h4>3. Uvolnění hýždí a čelisti (Svalové řetězce)</h4>
-            <p><strong>Povol hýždě (zadek):</strong> Sevření půlek automaticky sevře i pánev do křeče. Zadek musí zůstat měkký.<br>
-            <strong>Povol čelist:</strong> Pootevři ústa a spusť ramena. Neurologické spojení mezi krkem a pánví způsobí, že pánevní dno okamžitě povolí.</p>
-        </div>
+            <div class="guide-box">
+                <h4>1. Reverse Kegel + Nádech do pánve (Synergie)</h4>
+                <p>Když cítíš, že se vzrušení blíží k 7–8 z 10, **udělej pomalý nádech nosem hluboko do podbřišku a současně jemně vytlač hráz směrem ven**. Klesající bránice mechanicky prověsí pánevní dno a rozbije reflex.</p>
+            </div>
 
-        <div class="guide-box">
-            <h4>4. Změna hloubky přírazů</h4>
-            <p>Přejdi z hlubokých rychlých přírazů na mělké krouživé pohyby, nebo využij techniku <strong>Deep soaking</strong> (zasunout hluboko, na 5–10 vteřin se úplně zastavit, obejmout partnerku a zhluboka nadechnout do břicha).</p>
-        </div>
+            <div class="guide-box">
+                <h4>2. Pomalý výdech ústy (Zklidnění tepu)</h4>
+                <p>Po hlubokém nádechu vydechni pomalu a plynule ústy (jako při foukání do polévky). Dlouhý výdech ztlumí stres a vypne poplach v těle. <strong>Pozor:</strong> Při výdechu svaly nezatínej zpět, nech je prověšené!</p>
+            </div>
 
-        <div class="ritual-box">
-            <strong style="color:var(--primary); font-size:14px; display:block; margin-bottom:6px;">⚡ 10sekundový záchranný rituál v akci:</strong>
-            <ol style="margin:0; padding-left:18px; font-size:13px; line-height:1.5;">
-                <li>Povol zadek a uvolni čelist.</li>
-                <li>Udělej hluboký nádech nosem do břicha a současně jemně vytlač sval ven (Reverse Kegel s nádechem).</li>
-                <li>Pomalu vydechuj ústy a sval nech dál prověšený a uvolněný.</li>
-                <li>Během 2 klidných dechů spadne vzrušení z 8/10 na bezpečných 5/10.</li>
+            <div class="guide-box">
+                <h4>3. Uvolnění hýždí a čelisti</h4>
+                <p><strong>Povol hýždě (zadek):</strong> Sevření půlek automaticky sevře i pánev do křeče. Zadek musí zůstat měkký.<br>
+                <strong>Povol čelist:</strong> Pootevři ústa a spusť ramena. Neurologické spojení mezi krkem a pánví způsobí, že pánevní dno okamžitě povolí.</p>
+            </div>
+
+            <div class="guide-box">
+                <h4>4. Změna hloubky přírazů</h4>
+                <p>Přejdi na mělké krouživé pohyby, nebo využij techniku <strong>Deep soaking</strong> (zasunout hluboko, na 5–10 vteřin se úplně zastavit a zhluboka nadechnout do břicha).</p>
+            </div>
+
+            <div class="ritual-box">
+                <strong style="color:var(--primary); font-size:14px; display:block; margin-bottom:6px;">⚡ 10sekundový záchranný rituál v akci:</strong>
+                <ol style="margin:0; padding-left:18px; font-size:13px; line-height:1.5;">
+                    <li>Povol zadek a uvolni čelist.</li>
+                    <li>Hluboký nádech nosem do břicha + současně jemně vytlač sval ven (Reverse Kegel).</li>
+                    <li>Pomalu vydechuj ústy a sval nech dál prověšený a uvolněný.</li>
+                    <li>Během 2 klidných dechů spadne vzrušení z 8/10 na bezpečných 5/10.</li>
+                </ol>
+            </div>
+
+            <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+
+            <h3 style="color: var(--primary); margin-top:0;">Sólo trénink: Edging</h3>
+            <p style="font-size:13px; color:var(--text-muted);">Trénuj 2–3× týdně při sólo stimulaci bez cíle vyvrcholit:</p>
+            <ol style="padding-left: 20px; line-height: 1.6; font-size: 13px;">
+                <li><strong>Rozjezd (1–5/10):</strong> Pomalá stimulace, uvolněná pánev, klidný dech do břicha.</li>
+                <li><strong>Nárůst (6–8/10):</strong> Svaly pánve se začnou samy zatahovat – všímej si tohoto napětí.</li>
+                <li><strong>Bod zlomu (8.5/10) - STOP:</strong> Okamžitě pusť ruku a zastav veškerý kontakt!</li>
+                <li><strong>Reverse Kegel S NÁDECHEM:</strong> Udělej hluboký nádech nosem až do pánve a současně jemně vytlač sval ven. Ejakulační reflex se rozpadne. Pomalu vydechni a nech pánev prověšenou.</li>
+                <li><strong>Opakuj:</strong> Jakmile vzrušení klesne na 6/10, pokračuj (3–4 cykly).</li>
             </ol>
         </div>
 
-        <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+        <!-- 2B. PODSEKCE: REVERSE KEGEL MANUÁL -->
+        <div id="guidesec-rk" style="display:none;">
+            <h3 style="color: var(--primary); margin-top:0;">Kompletní manuál: Reverse Kegel</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
+                Zatímco klasický Kegel svaly stahuje nahoru, Reverse Kegel je aktivně **rozpíná, prodlužuje a otevírá směrem dolů a ven**. Je to absolutní základ pro ovládnutí ejakulačního reflexu.
+            </p>
 
-        <h3 style="color: var(--primary); margin-top:0;">Sólo trénink: Edging</h3>
-        <p style="font-size:13px; color:var(--text-muted);">Trénuj 2–3× týdně při sólo stimulaci bez cíle vyvrcholit:</p>
-        <ol style="padding-left: 20px; line-height: 1.6; font-size: 13px;">
-            <li><strong>Rozjezd (1–5/10):</strong> Pomalá stimulace, uvolněná pánev, klidný dech do břicha.</li>
-            <li><strong>Nárůst (6–8/10):</strong> Svaly pánve se začnou samy zatahovat – všímej si tohoto napětí.</li>
-            <li><strong>Bod zlomu (8.5/10) - STOP:</strong> Okamžitě pusť ruku a zastav veškerý kontakt!</li>
-            <li><strong>Reverse Kegel S NÁDECHEM:</strong> Udělej hluboký nádech nosem až do pánve a současně jemně vytlač sval ven. Klesající bránice sval roztáhne a ejakulační reflex se rozpadne. Pomalu vydechni a nech pánev prověšenou.</li>
-            <li><strong>Opakuj:</strong> Jakmile vzrušení klesne na 6/10, pokračuj (3–4 cykly).</li>
-        </ol>
+            <div class="guide-box">
+                <h4>1. Jak dýchat během 20–30s fáze? (Zásadní pravidlo)</h4>
+                <p>
+                    <strong>NENADECHUJ SE celou dobu!</strong> Fyzicky nelze nadechovat 20 vteřin v kuse.<br><br>
+                    • <strong>Sekunda 0–5 (Odemknutí):</strong> Udělej hluboký nádech nosem dolů do pánve a současně jemně vytlač sval ven.<br>
+                    • <strong>Sekunda 5–20+ (Udržení pozice):</strong> Sval **necháš v tomto otevřeném, prověšeném stavu** a dál **zcela normálně a klidně dýcháš** (pomalý výdech ústy, další menší nádech). Sval nesmíš zatnout zpět!<br>
+                    • <strong>Pauza / Neutrál:</strong> Přestaneš tlačit, sval se sám vrátí do klidové polohy a odpočívá.
+                </p>
+            </div>
+
+            <div class="guide-box">
+                <h4>2. Intenzita tlaku: Pouze na 20–30 %!</h4>
+                <p>
+                    Nejčastější chyba je tlačit silou jako na záchodě při zácpě. Tím zatneš břicho a riskuješ hemeroidy.<br>
+                    Tlak musí být **velmi jemný a plynulý (20–30 % síly)**. Je to spíše pocit „rozpínání prostoru“ v kalhotách nebo jako když se otevírá poupě květiny.
+                </p>
+            </div>
+
+            <div class="guide-box">
+                <h4>3. Přední vs. Zadní část pánve</h4>
+                <p>
+                    • <strong>Zadní část (kolem konečníku):</strong> Povolení je podobné, jako když chceš bezpečně vypustit větry.<br>
+                    • <strong>Přední část (pod varlaty – klíčová pro výdrž!):</strong> Soustřeď se na prostor mezi šourkem a kořenem penisu. Představ si, že chceš začít močit bez jakéhokoliv odporu. Měl bys fyzicky cítit, jak **šourek a varlata klesnou o pár milimetrů níž**.
+                </p>
+            </div>
+
+            <div class="guide-box">
+                <h4>4. Nejlepší polohy pro trénink</h4>
+                <p>
+                    1. <strong>V lehu na zádech:</strong> Pokrč kolena, chodidla na zemi. Břicho je úplně měkké, sval se ovládá nejsnadněji (ideální pro začátečníky).<br><br>
+                    2. <strong>Hluboký dřep („Malasana“):</strong> Jdi do hlubokého dřepu s koleny od sebe. V této pozici je pánevní dno přirozeně maximálně rozevřené – Reverse Kegel v ní ucítíš 3× intenzivněji.<br><br>
+                    3. <strong>Pozice dítěte (Child's Pose):</strong> Klekni na kolena, dosedni na paty, čelo polož na zem a ruce natáhni dopředu. Dýchej zhluboka do beder a pánve.<br><br>
+                    4. <strong>V sedě / ve stoje:</strong> Pokročilá fáze, kterou pak přímo přeneseš do sexu.
+                </p>
+            </div>
+
+            <div class="warning-box">
+                ⚠️ <strong>Na co si dávat pozor (Kontrolní checklist):</strong><br>
+                • <strong>Hýždě (zadek):</strong> Musí být úplně měkké a uvolněné.<br>
+                • <strong>Břicho:</strong> Polož si na něj ruku – nesmí být tvrdé ani zaťaté do křeče.<br>
+                • <strong>Čelist a obličej:</strong> Nesmíš rudnout v obličeji ani zatínat zuby. Pootevři ústa a povol ramena.
+            </div>
+        </div>
     </div>
 
     <!-- 3. PROGRES -->
@@ -433,7 +546,7 @@
         switchTab('train');
     }
 
-    // --- LEVELOVACÍ LOGIKA (Každých 9 tréninků = +1 Level) ---
+    // --- LEVELOVACÍ LOGIKA (9 tréninků = +1 Level) ---
     const WORKOUTS_PER_LEVEL = 9;
 
     function getProgression() {
@@ -473,7 +586,7 @@
             {
                 id: 'reverse',
                 name: '3. Reverse Kegel',
-                desc: `${prog.reverseTime}s nádech do pánve & uvolnění ven + 10s odpočinek (3 opakování)`,
+                desc: `${prog.reverseTime}s nádech & tlak ven + 10s neutrál (3 opakování)`,
                 work: prog.reverseTime, rest: 10, reps: 3
             }
         ];
@@ -497,7 +610,7 @@
         document.getElementById('setting-reverse').value = settings.baseReverse;
     }
 
-    // --- INTERAKTIVNÍ PLAYER S 5s PŘÍPRAVOU A DECHEM ---
+    // --- INTERAKTIVNÍ PLAYER ---
     let playerTimer = null;
     let currentExId = null;
 
@@ -527,7 +640,6 @@
                 playBeep(450, 0.1);
             } else {
                 clearInterval(playerTimer);
-                // 2. FÁZE: Start samotného cvičení
                 runWorkoutLoop(id, workTime, restTime, totalReps);
             }
         }, 1000);
@@ -547,15 +659,20 @@
             if (isWork) {
                 if (id === 'reverse') {
                     phaseEl.innerText = 'NÁDECH & REVERSE KEGEL';
-                    breathEl.innerText = '🫁 Pomalý hluboký NÁDECH do podbřišku + jemně vytlačuj sval ven. Při výdechu nech sval dál uvolněný!';
+                    breathEl.innerText = '🫁 Hluboký NÁDECH do pánve + jemně vytlačuj sval ven. Pak dál klidně dýchej a drž uvolnění!';
                 } else {
                     phaseEl.innerText = 'ZATNOUT';
                     breathEl.innerText = '💨 Pomalý výdech ústy a pevné zatnutí svalu nahoru';
                 }
                 phaseEl.className = 'player-phase phase-work';
             } else {
-                phaseEl.innerText = 'UVOLNIT / ODPOČINEK';
-                breathEl.innerText = '🫁 Hluboký nádech nosem do břicha, úplné prověšení svalu';
+                if (id === 'reverse') {
+                    phaseEl.innerText = 'NEUTRÁL / BĚŽNÝ DECH';
+                    breathEl.innerText = '🧘 Přestaň tlačit ven. Nech sval vrátit do klidového stavu a dýchej přirozeně.';
+                } else {
+                    phaseEl.innerText = 'UVOLNIT / ODPOČINEK';
+                    breathEl.innerText = '🫁 Hluboký nádech nosem do břicha, úplné prověšení svalu';
+                }
                 phaseEl.className = 'player-phase phase-rest';
             }
             timerEl.innerText = timeLeft;
@@ -569,15 +686,12 @@
             timeLeft--;
             if (timeLeft <= 0) {
                 if (isWork) {
-                    // Konec fáze zatnutí/reverse -> začíná odpočinek
                     isWork = false;
                     timeLeft = restTime;
                     playBeep(400, 0.15);
                 } else {
-                    // Konec pauzy -> další opakování
                     currentRep++;
                     if (currentRep > totalReps) {
-                        // Konec celého cviku
                         clearInterval(playerTimer);
                         finishExerciseSuccess(id);
                         return;
@@ -619,7 +733,6 @@
         logs.push(dateStr);
         localStorage.setItem('staminaLogs', JSON.stringify(logs));
 
-        // Reset stavu pro další trénink
         sessionCompleted = { fast: false, slow: false, reverse: false };
         localStorage.setItem('staminaCurrentSession', JSON.stringify(sessionCompleted));
 
@@ -627,7 +740,7 @@
         alert('Skvělá práce! Trénink zapsán do historie a všechny cviky jsou znovu připraveny na příště.');
     }
 
-    // --- PŘEPÍNÁNÍ ZÁLOŽEK ---
+    // --- PŘEPÍNÁNÍ HLAVNÍCH ZÁLOŽEK ---
     function switchTab(tabId) {
         document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav button').forEach(el => el.classList.remove('active'));
@@ -635,6 +748,20 @@
         document.getElementById('tab-' + tabId).classList.add('active');
         if(tabId === 'progress') renderLogs();
         if(tabId === 'train') renderExerciseList();
+    }
+
+    // --- PŘEPÍNÁNÍ PODZÁLOŽEK V GUIDELINE ---
+    function switchGuideSubTab(subTabId) {
+        document.querySelectorAll('.sub-nav button').forEach(el => el.classList.remove('active'));
+        document.getElementById('subtab-' + subTabId).classList.add('active');
+
+        if (subTabId === 'sex') {
+            document.getElementById('guidesec-sex').style.display = 'block';
+            document.getElementById('guidesec-rk').style.display = 'none';
+        } else {
+            document.getElementById('guidesec-sex').style.display = 'none';
+            document.getElementById('guidesec-rk').style.display = 'block';
+        }
     }
 
     function renderLogs() {
