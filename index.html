@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Kegels Training</title>
 
-    <!-- REŽIM ČISTÉ APLIKACE (PWA Standalone - skryje lišty prohlížeče) -->
+    <!-- PWA Standalone Mode (pro iPhone i Android) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Kegels">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0f172a">
 
-    <!-- Ikonka pro iPhone i Android -->
+    <!-- Ikonky pro plochu telefonu -->
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/192/strength.png">
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/192/strength.png">
 
-    <!-- Vestavěný Manifest pro instalaci aplikace -->
-    <link rel="manifest" href='data:application/manifest+json,{"name":"Kegels Training","short_name":"Kegels","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a","icons":[{"src":"https://img.icons8.com/fluency/192/strength.png","sizes":"192x192","type":"image/png"}]}'>
+    <!-- Propojení na tvůj manifest.json -->
+    <link rel="manifest" href="manifest.json">
 
     <style>
         :root {
@@ -518,6 +518,15 @@
 </div>
 
 <script>
+    // --- REGISTRACE SERVICE WORKERU PRO PWA ---
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('PWA Service Worker aktivní'))
+                .catch(err => console.log('Chyba registrace SW:', err));
+        });
+    }
+
     // --- ZVUKOVÝ EFEKT (Web Audio API) ---
     function playBeep(freq = 600, duration = 0.15) {
         try {
@@ -619,7 +628,6 @@
         document.getElementById('player-title').innerText = name;
         document.getElementById('player-overlay').style.display = 'flex';
 
-        // 1. FÁZE: 5 vteřin příprava
         let prepTime = 5;
         const phaseEl = document.getElementById('player-phase');
         const breathEl = document.getElementById('player-breath');
